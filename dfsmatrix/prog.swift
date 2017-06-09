@@ -3,28 +3,30 @@ let n = Int(readLine()!)!
 let m = Int(readLine()!)!
 
 class Node {
-  var id: Int
+  var id: String
   var address: (x: Int, y: Int)
   var value: Int
-  var graph_id: Int?
+  var graph_id: String?
 
-  init(id: Int, address: (Int, Int), value: Int) {
+  init(id: String, address: (Int, Int), value: Int) {
     self.id = id
     self.address = address
     self.value = value
   }
 }
 
-var nodes = [Int: Node]()
+var nodes = [String: Node]()
 
-func graph_size(size: inout Int, node: Node, nodes: inout [Int: Node]) -> Int {
+func graph_size(size: inout Int, node: Node, nodes: inout [String: Node]) -> Int {  
   var neighbor_nodes = [Node]()
-
-  for i in -1..<1 {
-    for k in -1..<1 {
-      if (nodes[node.id+i+k] != nil) { neighbor_nodes.append(nodes[node.id+i+k]!) }
+  
+  for x in -1..<2 {
+    for y in -1..<2 {
+      let neighbor_id = "\(node.address.x + x)\(node.address.y + y)"
+      if (nodes[neighbor_id] != nil) { neighbor_nodes.append(nodes[neighbor_id]!) }
     }
   }
+      
   for neighbor_node in neighbor_nodes {
     if(neighbor_node.value == 0 || neighbor_node.graph_id != nil){ continue }
     neighbor_node.graph_id = node.graph_id
@@ -34,11 +36,21 @@ func graph_size(size: inout Int, node: Node, nodes: inout [Int: Node]) -> Int {
   return size
 }
 
-for i in 0..<n {
+for x in 0..<n {
   var row = readLine()!.components(separatedBy: [" "])
-  for k in 0..<row.count {
-    nodes[i+k] = Node(id: i+k, address: (i,k), value: Int(row[k])!)
+  for y in 0..<row.count {
+    var id = "\(x)\(y)"
+    nodes[id] = Node(id: id, address: (x,y), value: Int(row[y])!)
   }
 }
 
-print("\(n)")
+var largest = 0
+for (id,node) in nodes {
+  if(node.value == 0 || node.graph_id != nil) { continue }
+  node.graph_id = node.id
+  var size = 1
+  var gs = graph_size(size: &size, node: node, nodes: &nodes)
+  largest = largest > gs ? largest : gs
+}
+
+print("\(largest)")

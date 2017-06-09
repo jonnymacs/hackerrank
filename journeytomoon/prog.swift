@@ -19,9 +19,7 @@ var graph_sizes = [Int]()
 
 func graph_size(size: inout Int, node: Node, nodes: inout [Int: Node]) -> Int {
   for edge_id in node.edges {
-    if(nodes[edge_id]?.graph_id != nil){
-      continue
-    }
+    if(nodes[edge_id]?.graph_id != nil){ continue }
     nodes[edge_id]?.graph_id = node.graph_id
     size+=1
     size = graph_size(size: &size, node: nodes[edge_id]!, nodes: &nodes)

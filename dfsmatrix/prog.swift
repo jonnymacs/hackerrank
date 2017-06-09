@@ -18,18 +18,18 @@ class Node {
 var nodes = [Int: Node]()
 
 func graph_size(size: inout Int, node: Node, nodes: inout [Int: Node]) -> Int {
-  var neighbor_nodes = [(Int,Int)]
+  var neighbor_nodes = [Node]()
 
   for i in -1..<1 {
     for k in -1..<1 {
-      //todo buid list of neighbor nodes
+      if (nodes[node.id+i+k] != nil) { neighbor_nodes.append(nodes[node.id+i+k]!) }
     }
   }
-  for id in neighbor_nodes {
-    if(nodes[id] == nil || nodes[id]?.value == 0 || nodes[id]?.graph_id != nil || ){ continue }
+  for neighbor_node in neighbor_nodes {
+    if(neighbor_node.value == 0 || neighbor_node.graph_id != nil){ continue }
     neighbor_node.graph_id = node.graph_id
     size+=1
-    size = graph_size(size: &size, node: neighbor_node!, nodes: &nodes)
+    size = graph_size(size: &size, node: neighbor_node, nodes: &nodes)
   }
   return size
 }

@@ -13,6 +13,7 @@ def get_ways(n,c,m)
   else
     @mem_ways[n][m] = get_ways(n,c,m-1) + get_ways(n - c[m-1],c,m)
   end
+  return @mem_ways[n][m]
 end
 
 n, m = gets.strip.split(' ').map(&:to_i)

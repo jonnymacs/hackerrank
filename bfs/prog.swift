@@ -39,36 +39,25 @@ for _ in 0..<q {
   let head_node = nodes[s]
   head_node.is_head = true
   head_node.level = 0
-  for node_id in head_node.edges {
-    nodes[node_id].level = 1
-  }
+  var distances: [String] = Array(repeating: "-1", count: nodes.count)
 
-  func set_level(node_ids: [Int], level: Int) {
+  func set_levels(node_ids: [Int], level: Int) {
     var next_level_node_ids = [Int]()
+
     for node_id in node_ids {
-      if nodes[node_id].level == level {
-        for edge_node_id in nodes[node_id].edges {
-          if nodes[edge_node_id].level == -1 {
-            nodes[edge_node_id].level = level + 1
-            next_level_node_ids.append(edge_node_id)
-          }
-        }
+      if nodes[node_id].level == -1 {
+        nodes[node_id].level = level + 1
+        distances[node_id] = String(describing: (level + 1) * 6)
+        next_level_node_ids += nodes[node_id].edges
       }
     }
-
-    for node_id in next_level_node_ids {
-      let edge_node = nodes[node_id]
-      set_level(node_ids: edge_node.edges, level: level + 1)
-    }
+    if !next_level_node_ids.isEmpty { set_levels(node_ids: next_level_node_ids, level: level + 1) }
   }
 
-  set_level(node_ids: head_node.edges, level: 1)
+  set_levels(node_ids: head_node.edges, level: 0)
 
-  var distances = [String]()
-  for node in nodes {
-    if node.id == 0 || node.is_head { continue }
-    let distance = node.level == -1 ? -1 : node.level * 6
-    distances.append(distance.description)
-  }
+  distances.remove(at: s)
+  distances.remove(at: 0)
+
   print("\(distances.joined(separator: " "))")
 }

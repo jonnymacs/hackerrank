@@ -1,5 +1,4 @@
 import Foundation
-extension String: Error {}
 
 func median_of_min_and_max_heaps(_ min_heap:  MinHeapInt, _ max_heap: MaxHeapInt) -> Double {
   if (min_heap.count() + max_heap.count()) % 2 == 0 {
@@ -23,7 +22,6 @@ let n = Int(readLine()!)!
 
 for _ in 0..<n {
   let a = Int(readLine()!)!
-  print(a)
   if min_heap.count() == 0 {
     min_heap.add(a)
     print(String(describing: median_of_min_and_max_heaps(min_heap, max_heap)))

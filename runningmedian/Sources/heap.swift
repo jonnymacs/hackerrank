@@ -1,3 +1,4 @@
+extension String: Error {}
 public class Heap<Element> {
 
   var items: [Element]

@@ -1,69 +1,74 @@
 import Foundation
 
-struct IceCream {
-  var index: Int
-  var cost: Int
-  
-  init(_ index: Int, _ cost: Int) {
-    self.index = index
-    self.cost = cost
-  }
-}
-
-func binary_search(_ sorted_ice_creams: [IceCream], _ start: Int, _ end: Int, _ target: Int) -> Int {
-  let subset = Array(sorted_ice_creams[start..<end])
-
-  let first = subset.first!
-  let last = subset.last!
-  
-  if (first.cost == target) { return first.index }
-  if (last.cost == target) { return last.index }
-  if (subset.count == 1 || subset.count == 2) { return -1 }
-  
-  let split = (subset.count / 2) + 1
-  
-  if subset[split-1].cost > target {
-    return binary_search(subset, 0, subset.count - split, target)
-  } else if subset[split-1].cost < target {
-    return binary_search(subset, split, subset.count, target)
-  } else if subset[split-1].cost == target {
-    return subset[split-1].index
-  }  
-  return -1
-  
-}
-
 let t = Int(readLine()!)!
+
+struct Node {
+  var id: Int
+  var value: Int
+
+  init(id: Int, value: Int) {
+    self.id = id
+    self.value = value
+  }
+}
+// search in a sorted list for a target value
+// using a binary search technique.
+//
+func binary_search(_ list: [Node], _ start: Int, _ end: Int, _ target: Int) -> Int {
+  let subset = Array(list[start..<end+1])
+
+  if subset.first!.value == target { return subset.first!.id }
+  if subset.last!.value == target { return subset.last!.id }
+  if subset.count == 2 { return -1 }
+
+  let split_index = (subset.count / 2) + 1
+
+  if subset[split_index].value == target { return subset[split_index].id }
+
+  var new_start: Int, new_end: Int
+  if subset[split_index].value > target {
+    new_start = 0
+    new_end = split_index - 1
+  } else {
+    new_start = split_index - 1
+    new_end = subset.count - 1
+  }
+  return binary_search(subset, new_start, new_end, target)
+}
+
 for _ in 0..<t {
-  let money = Int(readLine()!)! 
+  let m = Int(readLine()!)!
   let n = Int(readLine()!)!
-  let costs = readLine()!.components(separatedBy: " ").map{ Int($0)! }
-  var ice_creams = [IceCream]()
+  // Can't sort the list here b/c need to preserve the ids as index +!
+  //
+  let data = readLine()!.components(separatedBy: " ").map{ Int($0) }
+
+  // build a list of nodes sorted by value
+  var nodes = [Node]()
+  for i in 0..<n { nodes.append(Node(id: i+1, value: data[i]!)) }
+  nodes = nodes.sorted{ $0.value < $1.value }
   
-  for i in 0..<costs.count {
-      var ic = IceCream(i+1,costs[i])
-      ice_creams.append(ic)  
-  }
-  
-  var sorted_ice_creams = ice_creams.sorted{ (left, right) -> Bool in
-    left.cost < right.cost
-  }
-  
-  for i in 0..<(n-1) {
-    var current_index = sorted_ice_creams[i].index
-    var target = money - sorted_ice_creams[i].cost
+  // or
+  // let nodes = nodes.sorted{ (left, right) -> Bool in
+  //   left.value < right.value
+  // }
+  for i in 0..<n {
+    let current_node = nodes[i]
+    let current_id = current_node.id
+    let target = m - current_node.value
     
-    if(target < 0) { continue }
-      
-    let subset = Array(sorted_ice_creams[0..<i]) + Array(sorted_ice_creams[(i+1)..<n])
-    var start = 0
-    var end = subset.count
-    var target_index = binary_search(subset, start, end, target)
+    if target < 0 { continue }
     
-    if target_index != -1 {
-      print("\(Array([current_index, target_index]).sorted().map{ String(describing: $0) }.joined(separator: " "))")
+    let subset = Array(nodes[0..<i] + nodes[i+1..<n])
+    let target_id = binary_search(subset, 0, n-2, target)
+    
+    // look for the target and return the id
+    // if the target is not found, returns -1
+    //
+    if target_id != -1 {
+      print("\(Array([current_id, target_id]).sorted().map{ String(describing: $0) }.joined(separator: " "))")
       break
     }
   }
-  
+
 }

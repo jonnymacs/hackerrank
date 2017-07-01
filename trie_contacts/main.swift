@@ -1,49 +1,65 @@
 import Foundation
 
-class Node {
-  var letter: Character
-  var children: [Character: Node] = [:]
-  var makes_word = false
-  var num_partial_for = 0
-
-  init(letter: Character) {
-    self.letter = letter
+class Trie {
+  private let root: Node
+  
+  init() {
+    self.root = Trie.Node(letter: nil)
   }
-}
 
-func add_contact(name: String, trie: Node) {
-  var parent = trie
-  var child: Node?
+  private class Node {
+    var letter: Int8?
+    var children: [Int8: Node] = [:]
+    var num_partial_for = 0
+    // var makes_word = false
+    // var word: String?
 
-  for char in name.characters {
-    if parent.children[char] == nil {
-      child = Node(letter: char)
-      parent.children[char] = child
+    init(letter: Int8?) {
+      self.letter = letter
     }
-    parent = parent.children[char]!
-    parent.num_partial_for += 1
   }
-  if child != nil { child!.makes_word = true }
+    
+  func add_contact(name: String) {
+    var parent = root
+    var child: Node?
+
+    for char in name.utf8 {
+      let letter = Int8(char)
+      if parent.children[letter] == nil {
+        child = Trie.Node(letter: letter)
+        parent.children[letter] = child
+      }
+      parent = parent.children[letter]!
+      parent.num_partial_for += 1
+    }
+    // parent.makes_word = true
+    // parent.word = name
+  }
+
+  func find_num_contacts(for input: String) -> Int {    
+    var parent = root
+    for char in input.utf8 {
+      let letter = Int8(char)
+      if parent.children[letter] == nil { return 0 }
+      else {
+        parent = parent.children[letter]!
+      }
+    }
+    return parent.num_partial_for
+  }
+  
 }
 
-func find_num_contacts(for input: String, trie: Node) -> Int {
-  var parent = trie
-  let characters = input.characters
-
-  for char in characters {
-    if char == characters.last && parent.children[char] == nil { return 0 }
-    if parent.children[char] != nil { parent = parent.children[char]! }
-  }
-  return parent.num_partial_for
-}
-
-let root = Node(letter: Character("-"))
-
+let trie = Trie()
 let n = Int(readLine()!)!
-var counts: [Int] = []
-for _ in 0..<n {
+var counts = ""
+
+for i in 0..<n {
   let line = readLine()!.components(separatedBy: " ")
-  if line[0] == "add" { add_contact(name: line[1], trie: root) }
-  else { counts.append(find_num_contacts(for: line[1], trie: root)) }
+  if line[0] == "add" { trie.add_contact(name: line[1]) }
+  else { 
+    counts += String(trie.find_num_contacts(for: line[1]))
+    if i != n-1 { counts += "\n" }
+  }
 }
-print("\(counts.map{ String(describing: $0) }.joined(separator: "\n"))")
+print("\(counts)")

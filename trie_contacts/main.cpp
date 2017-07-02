@@ -5,9 +5,25 @@
 
 using namespace std;
 
+// Class def for Trie
+//
+// Constructor builds a root
+// node with the @ character.
+// Ideally we construct without
+// a letter...
+//
 class Trie {
 
   private:
+    // Class def for Node in the Trie
+    //
+    // Constructor builds a Node with
+    // the supplied letter and
+    // initializes a counter.
+    // num_partial_for holds the value
+    // for how many words the node
+    // is a substring for
+    //
     class Node {
       public:
         char letter;
@@ -27,13 +43,14 @@ class Trie {
   public:
     Trie() : root('@') { }
 
+    // Public add_contact method
+    // takes a string and adds it
+    // to the trie
+    //
     void add_contact(string input) {
       Node * parent = &root;
 
       for(int i = 0; i < input.length(); i++) {
-        // for(map<char, Node >::const_iterator it = root.children.begin(); it != root.children.end(); ++it) {
-        //     cout << it->first << " " << it->second.letter << "\n";
-        // }
         if(parent->children.count(input[i]) == 0) {
           Node child = Node(input[i]);
           parent->children.insert(pair<char, Node>(input[i], child));
@@ -44,6 +61,11 @@ class Trie {
       parent->makes_word = true;
     }
 
+    // Public find_num_contacts method
+    // takes a string and returns an int
+    // for how many words the string is a
+    // substring for in the trie
+    //
     int find_num_contacts(string input) {
       Node * parent = &root;
 
@@ -55,6 +77,18 @@ class Trie {
     }
 };
 
+// read stdin
+// either add contact
+// or print how many contacts
+// the string input is a
+// substring for
+// ex in:
+// 4 - number of entries
+// add hack
+// add hackerrank
+// find hac
+// find hak
+//
 int main(){
     int n;
     cin >> n;

@@ -10,8 +10,8 @@ func merge_sorted(left: [Int], right: [Int]) -> [Int] {
   var i_right = 0
 
   for i in 0..<(left.count + right.count) {
-  if i_left < left.count && left[i_left] <= right[i_right] {
-    target[i] = left[i_left]
+    if i_left < left.count && left[i_left] <= right[i_right] {
+      target[i] = left[i_left]
       i_left += 1
     } else if i_right < right.count {
       target[i] = right[i_right]

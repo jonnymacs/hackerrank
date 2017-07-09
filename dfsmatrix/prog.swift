@@ -18,20 +18,16 @@ class Node {
 var nodes = [String: Node]()
 
 func graph_size(size: inout Int, node: Node, nodes: inout [String: Node]) -> Int {  
-  var neighbor_nodes = [Node]()
-  
   for x in -1..<2 {
     for y in -1..<2 {
       let neighbor_id = "\(node.address.x + x)\(node.address.y + y)"
-      if (nodes[neighbor_id] != nil) { neighbor_nodes.append(nodes[neighbor_id]!) }
+      if nodes[neighbor_id] != nil, let neighbor_node = nodes[neighbor_id] {
+        if(neighbor_node.value == 0 || neighbor_node.graph_id != nil){ continue }
+        neighbor_node.graph_id = node.graph_id
+        size+=1
+        size = graph_size(size: &size, node: neighbor_node, nodes: &nodes)
+      }
     }
-  }
-      
-  for neighbor_node in neighbor_nodes {
-    if(neighbor_node.value == 0 || neighbor_node.graph_id != nil){ continue }
-    neighbor_node.graph_id = node.graph_id
-    size+=1
-    size = graph_size(size: &size, node: neighbor_node, nodes: &nodes)
   }
   return size
 }
@@ -49,8 +45,8 @@ for (id,node) in nodes {
   if(node.value == 0 || node.graph_id != nil) { continue }
   node.graph_id = node.id
   var size = 1
-  var gs = graph_size(size: &size, node: node, nodes: &nodes)
-  largest = largest > gs ? largest : gs
+  size = graph_size(size: &size, node: node, nodes: &nodes)
+  largest = largest > size ? largest : size
 }
 
 print("\(largest)")

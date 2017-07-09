@@ -1,3 +1,8 @@
+// compile with 
+// swiftc ./Sources/* main.swift -o prog
+// run with
+// cat input.txt | ./prog
+// 
 import Foundation
 
 func median_of_min_and_max_heaps(_ min_heap:  MinHeapInt, _ max_heap: MaxHeapInt) -> Double {

@@ -4,17 +4,17 @@ public class Heap<Element> {
   var items: [Element]
   init() { self.items = [] }
 
-  func left_child_index(for_index: Int) -> Int { return for_index * 2 + 1 }
-  func right_child_index(for_index: Int) -> Int { return for_index * 2 + 2 }
-  func parent_index(for_index: Int) -> Int { return ((for_index + 1) / 2) - 1 }
+  func left_child_index(for_index index: Int) -> Int { return index * 2 + 1 }
+  func right_child_index(for_index index: Int) -> Int { return index * 2 + 2 }
+  func parent_index(for_index index: Int) -> Int { return ((index + 1) / 2) - 1 }
 
-  func has_left_child(for_index: Int) -> Bool { return left_child_index(for_index: for_index) < count() }
-  func has_right_child(for_index: Int) -> Bool { return right_child_index(for_index: for_index) < count() }
-  func has_parent(for_index: Int) -> Bool { return parent_index(for_index: for_index) >= 0 }
+  func has_left_child(for_index index: Int) -> Bool { return left_child_index(for_index: index) < count() }
+  func has_right_child(for_index index: Int) -> Bool { return right_child_index(for_index: index) < count() }
+  func has_parent(for_index index: Int) -> Bool { return parent_index(for_index: index) >= 0 }
 
-  func left_child(for_index: Int) -> Element { return items[left_child_index(for_index: for_index)] }
-  func right_child(for_index: Int) -> Element { return items[right_child_index(for_index: for_index)] }
-  func parent(for_index: Int) -> Element { return items[parent_index(for_index: for_index)] }
+  func left_child(for_index index: Int) -> Element { return items[left_child_index(for_index: index)] }
+  func right_child(for_index index: Int) -> Element { return items[right_child_index(for_index: index)] }
+  func parent(for_index index: Int) -> Element { return items[parent_index(for_index: index)] }
 
   func swap(index1: Int, index2: Int) throws {
     if index1 > count() { throw("Invalid Index: \(index1)") }

@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <set>
 
 using namespace std;
 
@@ -15,8 +16,7 @@ class LinkedList {
     };
 
     void print(Node *head) {
-      Node *current = new Node();
-      current = head;
+      Node *current = head;
 
       while(current != NULL) {
         cout << current->data << "\n";
@@ -130,59 +130,226 @@ class LinkedList {
         return 0;
       }
     }
-
-    Node* mergeLists(Node *headA, Node* headB) {
+    
+    Node* mergeLists(Node *headA, Node*headB) {
       if(headA == NULL && headB == NULL) { return NULL; }
       if(headA != NULL && headB == NULL) { return headA; }
       if(headA == NULL && headB != NULL) { return headB; }
-
-      Node *left = headA;
-      Node *right = headB;
-      Node *merged = new Node();
-      Node *current = merged;
-
-      while(left != NULL && right != NULL) {
-        if(left->data < right->data) {
-          current->data = left->data;
-          left = left->next;
+      
+      Node *A = headA;
+      Node *B = headB;
+      Node *head = A;
+      
+      // ensure A is the merge target
+      //
+      if(A->data > B->data) {
+        Node *temp = A;
+        A = B;
+        B = temp;
+        head = A;
+      }
+      
+      while(A->next != NULL && B != NULL) {
+        if(A->next->data < B->data) {
+          A = A->next;
         } else {
-          current->data = right->data;
-          right = right->next;
+          Node *tempnext = B->next;
+          B->next = A->next;
+          A->next = B;
+          A = A->next;
+          B = tempnext;
         }
-        current->next = new Node();
+      }
+      
+      if(A->next == NULL) {
+        A->next = B;
+      }
+    
+      return head;
+      
+    }
+    
+    int getNodeFromTail(Node *head,int positionFromTail) {
+      Node *current = head;
+      Node *result = head;
+      
+      int counter = 0;
+      while(current->next != NULL) {
+        current = current->next;
+        if(counter >= positionFromTail) { result = result->next; }
+        else { counter++; } 
+      }
+            
+      return result->data;
+    }
+    
+    Node* removeDuplicates(Node *head) {
+      if(head == NULL || head->next == NULL) { return head; }
+      
+      Node *current = head;
+      
+      while(current != NULL && current->next != NULL) {
+        while(current->next != NULL && current->data == current->next->data) {
+          current->next = current->next->next;
+        }
         current = current->next;
       }
-
-      if(left == NULL) {
-        current->data = right->data;
-        if(right->next != NULL) { current->next = right->next; }
-      } else {
-        current->data = left->data;
-        if(left->next != NULL) { current->next = left->next; }
-      }
-
-      return merged;
+      return head;
     }
+    
+    bool has_cycle(Node* head) {
+      if(head == NULL) { return head; }
+      
+      set<Node*> visited;
+      Node *current = head;
+      
+      while(current->next != NULL) {
+        if(visited.insert(current).second) {
+          current = current->next;
+        } else {
+          return true;
+        }
+      }
+      return false;
+    }
+    
+    int findMergeNode(Node *headA, Node *headB) {
+      set<Node*> visited;
+      Node *currentA = headA;
+      Node *currentB = headB;
+      
+      while(currentA != NULL || currentB != NULL) {
+        if(currentA != NULL) {
+          if(visited.insert(currentA).second) {
+            currentA = currentA->next;
+          } else {
+            return currentA->data;
+          }
+        }
+        if(currentB != NULL) {
+          if(visited.insert(currentB).second) {
+            currentB = currentB->next;
+          } else {
+            return currentB->data;
+          }
+        }
+      }
+      return 0;
+    }
+
+};
+
+class DoubleLinkedList {
+  public:
+    struct Node {
+        int data;
+        struct Node *prev;
+        struct Node *next;
+    };
+    
+    void print(Node *head) {
+      Node *current = head;
+
+      while(current != NULL) {
+        cout << current->data << "\n";
+        current = current->next;
+      }
+    }
+    
+    Node* sortedInsert(Node *head,int data) {
+      Node *new_node = new Node();
+      new_node->data = data;
+    
+      if(head == NULL) { return new_node; }
+
+      Node *current = head;
+      while(current != NULL) {
+        if(current->data <= new_node->data) {
+          if(current->next == NULL){
+            new_node->prev = current;
+            current->next = new_node;
+            return head;
+          }
+          current = current->next;
+        } else {
+          if(current->prev != NULL) { current->prev->next = new_node; }
+          new_node->prev = current->prev;
+          new_node->next = current;
+          current->prev = new_node;
+          if(current == head) {
+            return new_node;
+          } else {
+            return head;
+          }
+        }  
+      }
+    
+      return head;
+    }
+    
+    Node* reverse(Node *head) {
+      if(head == NULL || head->next == NULL) { return head; }
+      
+      Node *current = head;
+      Node *next = current->next;
+      head->next = NULL;
+      
+      if(next != NULL) {
+        head = reverse(next);
+      } else {
+        head = next;
+      }
+      
+      next->prev = next->next;
+      next->next = current;
+      
+      current->next = current->prev;
+      current->prev = next;
+      
+      head->prev = NULL;
+      
+      return head;
+    }
+
 };
 
 int main () {
-  LinkedList ll;
-  LinkedList::Node *head = ll.insert_head(NULL, 1);
-
-  LinkedList ll2 = LinkedList();
-  LinkedList::Node *head2 = ll2.insert_head(NULL, 2);
-
-
-  ll.insert_tail(head, 3);
-  ll.insert_tail(head, 5);
-  ll.insert_tail(head, 6);
-
-  ll.insert_tail(head2, 4);
-  ll.insert_tail(head2, 7);
-
-  // ll.print(head);
-  // ll2.print(head2);
-
-  LinkedList::Node *merged_head = ll.mergeLists(head, head2);
-  ll.print(merged_head);
+  // LinkedList ll = LinkedList();
+  // ll.reversePrint(NULL);
+  // LinkedList::Node *head = ll.insert_head(NULL, 1);
+  // LinkedList::Node *head2 = ll.insert_head(NULL, 2);
+  // 
+  // head = ll.insert_tail(head, 2);
+  // head = ll.insert_tail(head, 3);
+  // //ll.print(head);
+  // head2 = ll.insert_tail(head2, 3);
+  // head2 = ll.insert_tail(head2, 5);  
+  
+  //ll.insert_tail(ll.getNodeFromTail)
+  
+  //ll.print(head);
+  //ll.print(head2);
+  // LinkedList::Node *merged = ll.mergeLists(head2,head);
+  // 
+  // ll.getNodeFromTail(merged, 6);
+  // 
+  // ll.print(merged);
+  // cout << "\n\n";
+  // merged = ll.removeDuplicates(merged);
+  // ll.print(merged);
+  // 
+  
+  
+  //cout << ll.has_cycle(head3) << "\n";
+  
+  DoubleLinkedList dll = DoubleLinkedList();
+  DoubleLinkedList::Node *head = dll.sortedInsert(NULL, 2);  
+  head = dll.sortedInsert(head, 1);
+  head = dll.sortedInsert(head, 4);
+  head = dll.sortedInsert(head, 3);
+  
+  dll.print(head);
+  DoubleLinkedList::Node *reversed = dll.reverse(head);
+  dll.print(reversed);
+  
 }

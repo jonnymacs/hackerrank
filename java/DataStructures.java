@@ -90,7 +90,7 @@ public class DataStructures {
 
   // 1d array game
   // https://www.hackerrank.com/challenges/java-1d-array
-  public static void main(String[] args) {
+  public static void main5(String[] args) {
       Scanner scan = new Scanner(System.in);
       int q = scan.nextInt();
       while (q-- > 0) {
@@ -131,19 +131,66 @@ public class DataStructures {
   }
 
   public static boolean canWin(int i, int leap, int[] game, HashMap<Integer,Boolean> memo) {
-    //System.out.println(i);
-    if(i >=0) { memo.put(i, true); }
-    // if i is negative
-    // if the current space is 1
-    if(i < 0 || i >= game.length || game[i] == 1) { return false; }
-    // if we made it to space 0 or 1
-    // or we can leap back to space 0 from here
-    // we can win
-    //
-    if(i == 0) { return true; }
-    return (memo.get(i - 1) == null && canWin(i - 1, leap, game, memo)) ||
-           (memo.get(i - leap) == null && canWin(i - leap, leap, game, memo)) ||
-           (memo.get(i + 1) == null && canWin(i + 1, leap, game, memo));
+      if (i >= 0) { memo.put(i, true); }
+      // if i is negative
+      // if the current space is 1
+      if (i < 0 || i >= game.length || game[i] == 1) { return false; }
+      // if we made it to space 0 or 1
+      // or we can leap back to space 0 from here
+      // we can win
+      //
+      if (i == 0) { return true; }
+
+      return (memo.get(i - 1) == null && canWin(i - 1, leap, game, memo)) ||
+              (memo.get(i - leap) == null && canWin(i - leap, leap, game, memo)) ||
+              (memo.get(i + 1) == null && canWin(i + 1, leap, game, memo));
   }
 
+  // add and remove from a list
+  public static void main7(String[] args) {
+       Scanner in = new Scanner(System.in);
+       int n = in.nextInt();
+       List<Integer> array = new ArrayList<Integer>();
+       for(int i = 0; i < n; i++) { array.add(in.nextInt()); }
+       int q = in.nextInt();
+
+       for(int i = 0; i < q; i++) {
+           String command = in.next();
+           int x = in.nextInt();
+           if(command.equals("Insert")) {
+             int y = in.nextInt();
+             array.add(x, y);
+           } else {
+             array.remove(x);
+           }
+       }
+
+       StringBuilder builder = new StringBuilder();
+       for (int value : array) { builder.append(value + " "); }
+       String text = builder.toString();
+       System.out.println(text);
+  }
+
+  public static void main(String []argh)  {
+    Scanner in = new Scanner(System.in);
+    int n = in.nextInt();
+    in.nextLine();
+
+    HashMap<String,Integer> phone_book = new HashMap<String,Integer>();
+
+    for(int i = 0; i < n; i++) {
+        String name = in.nextLine();
+        int phone = in.nextInt();
+        in.nextLine();
+        Integer number = phone_book.get(name);
+        if(number == null) { phone_book.put(name, phone); }
+    }
+
+    while(in.hasNext()) {
+        String s = in.nextLine();
+        Integer number = phone_book.get(s);
+        String output = number != null ? s + "=" + number : "Not found";
+        System.out.println(output);
+    }
+  }
 }

@@ -195,6 +195,62 @@ public class DataStructures {
     }
   }
 
+  // balanced brackets with a Stack
+  public static void main9(String []argh) {
+     Scanner sc = new Scanner(System.in);
+
+     while (sc.hasNext()) {
+        String input = sc.next();
+        String result = is_balanced(input) ? "true" : "false";
+        System.out.println(result);
+     }
+  }
+
+  public static Boolean is_balanced(String input) {
+    //StackOfCharacters stack = new StackOfCharacters();
+    // or do it with the native java stack class
+    //
+    Stack<Character> stack = new Stack<Character>();
+    for(int i = 0; i < input.length(); i++ ) {
+      Character bracket = input.charAt(i);
+      if(bracket == "{".charAt(0)) { stack.push("}".charAt(0)); }
+      else if(bracket == "(".charAt(0)) { stack.push(")".charAt(0)); }
+      else if(bracket == "[".charAt(0)) { stack.push("]".charAt(0)); }
+      else { if(stack.pop() != bracket) { return false; } }
+    }
+    return stack.empty();
+  }
+
+  public static class StackOfCharacters {
+    private ArrayList<Character> items;
+
+    public StackOfCharacters() {
+      items = new ArrayList<Character>();
+    }
+
+    public void push(Character el) {
+      items.add(el);
+    }
+
+    public Character pop() {
+      if(empty()) { return null; }
+      return items.remove(size() - 1);
+    }
+
+    public Character tail() {
+      if(empty()) { return null; }
+      return items.get(size()-1);
+    }
+
+    public Boolean empty() {
+      return size() == 0;
+    }
+
+    private int size() {
+      return items.size();
+    }
+  }
+
   public static void main(String[] args) {
      Scanner s = new Scanner(System.in);
      int t = s.nextInt();
@@ -214,4 +270,5 @@ public class DataStructures {
          if(names.add(name)) { System.out.println(count_uniqs++); }
      }
   }
+
 }

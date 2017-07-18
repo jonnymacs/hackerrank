@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <set>
+#include <map>
 
 using namespace std;
 
@@ -236,7 +237,39 @@ class LinkedList {
       }
       return 0;
     }
+    
+    Node * copyList(Node *head) {
+      if(head == NULL) { return NULL; }
+      map<Node*,Node*> node_map;
 
+      Node *copy_head = new Node();
+      copy_head->data = head->data;
+      node_map.insert(pair<Node*,Node*>(head, copy_head));
+
+      Node *current = head;
+      Node *current_copy = copy_head;
+
+      while(current->next != NULL) {
+
+         if(node_map.count(current->next) == 0) {
+             Node *copy_next = new Node();
+             copy_next->data = current->next->data;
+             node_map.insert(pair<Node*,Node*>(current->next, copy_next));
+         } 
+         current_copy->next = node_map.find(current->next)->second;
+        
+        //  if(node_map.count(current->arb) == 0 && current->arb != NULL) {
+        //      Node *copy_arb = new Node();
+        //      copy_arb->data = current->arb->data;
+        //      node_map.insert(pair<Node*,Node*>(current->arb, copy_arb));
+        //  }
+        //  
+        //  current_copy->arb = node_map.find(current->arb)->second;;
+         current = current->next;
+         current_copy = current_copy->next;
+      }
+      return copy_head;
+    }
 };
 
 class DoubleLinkedList {

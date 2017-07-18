@@ -35,7 +35,7 @@ def is_balanced?(expression)
     elsif char == '('
       stack << ')'
     else
-      return false if stack.empty? || char != stack.pop
+      return false if char != stack.pop
     end
   end
   return stack.empty?

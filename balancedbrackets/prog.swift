@@ -5,7 +5,8 @@ struct Stack<Element> {
     mutating func push(_ item: Element) {
         items.append(item)
     }
-    mutating func pop() -> Element {
+    mutating func pop() -> Element? {
+        if isEmpty() { return nil }
         return items.removeLast()
     }
     func isEmpty() -> Bool {
@@ -20,7 +21,7 @@ func is_balanced(expression: [Character]) -> Bool {
     else if char == "(" { stack.push(")") }
     else if char == "[" { stack.push("]") }
     else {
-      if(stack.isEmpty() || stack.pop() != char) { return false }
+      if(stack.pop() != char) { return false }
     }
   }
   return stack.isEmpty()

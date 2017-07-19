@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.stream.*;
 import java.text.*;
 import java.math.*;
+import java.lang.reflect.Method;
 
 public class DataStructures {
 
@@ -251,7 +252,9 @@ public class DataStructures {
     }
   }
 
-  public static void main(String[] args) {
+  // Hash set
+  // don't concat data to make a key if it might not be uniq!
+  public static void main10(String[] args) {
      Scanner s = new Scanner(System.in);
      int t = s.nextInt();
      String [] pair_left = new String[t];
@@ -266,9 +269,129 @@ public class DataStructures {
      int count_uniqs = 0;
 
      for(int i = 0; i < t; i++) {
-         String name = pair_left[i] + pair_right[i];
-         if(names.add(name)) { System.out.println(count_uniqs++); }
+         String name = pair_left[i] + " " + pair_right[i];
+         if(names.add(name)) { ++count_uniqs; } 
+         System.out.println(count_uniqs);
      }
   }
+  
+  // Generic Functions
+  public static void main11( String args[] ) {
+    Printer myPrinter = new Printer();
+    Integer[] intArray = { 1, 2, 3 };
+    String[] stringArray = {"Hello", "World"};
+    myPrinter.printArray(intArray);
+    myPrinter.printArray(stringArray);
+    int count = 0;
+  
+    for (Method method : Printer.class.getDeclaredMethods()) {
+        String name = method.getName();
+  
+        if(name.equals("printArray"))
+            count++;
+    }
+  
+    if(count > 1)System.out.println("Method overloading is not allowed!");
+  
+  }
+ 
+ // custom comparator
+  public static void main12(String[] args) {
+      Scanner scan = new Scanner(System.in);
+      int n = scan.nextInt();
 
+      Player[] player = new Player[n];
+      Checker checker = new Checker();
+      
+      for(int i = 0; i < n; i++){
+          player[i] = new Player(scan.next(), scan.nextInt());
+      }
+      scan.close();
+
+      Arrays.sort(player, checker);
+      for(int i = 0; i < player.length; i++){
+          System.out.printf("%s %s\n", player[i].name, player[i].score);
+      }
+  }
+
+  public static void main(String[] args){
+      Scanner in = new Scanner(System.in);
+      int testCases = Integer.parseInt(in.nextLine());
+      
+      List<Student> studentList = new ArrayList<Student>();
+      while(testCases>0){
+         int id = in.nextInt();
+         String fname = in.next();
+         double cgpa = in.nextDouble();
+         
+         Student st = new Student(id, fname, cgpa);
+         studentList.add(st);
+         
+         testCases--;
+      }
+         
+      studentList.sort((l,r) -> {
+        if(l.getCgpa() > r.getCgpa()) { return -1; }
+        else if(l.getCgpa() < r.getCgpa()) { return 1; }
+        else {
+          int compare_names = l.getFname().compareTo(r.getFname()); 
+          if(compare_names == 0) { return l.getId() < l.getId() ? -1 : 1; }
+          return compare_names;
+        }
+      });
+   
+      for(Student st: studentList){
+        System.out.println(st.getFname());
+      }
+   }  
+}
+
+class Player{
+    String name;
+    int score;
+    
+    Player(String name, int score){
+        this.name = name;
+        this.score = score;
+    }
+}
+
+class Checker implements Comparator<Player> {
+  
+  public int compare(Player a, Player b) {
+    if(a.score > b.score) { return -1; }
+    else if(a.score < b.score ) { return 1; }
+    return a.name.compareTo(b.name);
+  }
+  
+}
+
+class Printer {
+   //Write your code here
+   public <T> void printArray(T[] array) {
+     for(int i = 0; i < array.length; i++) {
+       System.out.println(array[i]);
+     }
+   }
+}
+
+class Student{
+   private int id;
+   private String fname;
+   private double cgpa;
+   public Student(int id, String fname, double cgpa) {
+      super();
+      this.id = id;
+      this.fname = fname;
+      this.cgpa = cgpa;
+   }
+   public int getId() {
+      return id;
+   }
+   public String getFname() {
+      return fname;
+   }
+   public double getCgpa() {
+      return cgpa;
+   }
 }

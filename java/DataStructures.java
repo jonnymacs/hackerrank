@@ -270,11 +270,11 @@ public class DataStructures {
 
      for(int i = 0; i < t; i++) {
          String name = pair_left[i] + " " + pair_right[i];
-         if(names.add(name)) { ++count_uniqs; } 
+         if(names.add(name)) { ++count_uniqs; }
          System.out.println(count_uniqs);
      }
   }
-  
+
   // Generic Functions
   public static void main11( String args[] ) {
     Printer myPrinter = new Printer();
@@ -283,18 +283,18 @@ public class DataStructures {
     myPrinter.printArray(intArray);
     myPrinter.printArray(stringArray);
     int count = 0;
-  
+
     for (Method method : Printer.class.getDeclaredMethods()) {
         String name = method.getName();
-  
+
         if(name.equals("printArray"))
             count++;
     }
-  
+
     if(count > 1)System.out.println("Method overloading is not allowed!");
-  
+
   }
- 
+
  // custom comparator
   public static void main12(String[] args) {
       Scanner scan = new Scanner(System.in);
@@ -302,7 +302,7 @@ public class DataStructures {
 
       Player[] player = new Player[n];
       Checker checker = new Checker();
-      
+
       for(int i = 0; i < n; i++){
           player[i] = new Player(scan.next(), scan.nextInt());
       }
@@ -313,54 +313,90 @@ public class DataStructures {
           System.out.printf("%s %s\n", player[i].name, player[i].score);
       }
   }
-  
+
   // custom sort
   public static void main13(String[] args){
       Scanner in = new Scanner(System.in);
       int testCases = Integer.parseInt(in.nextLine());
-      
+
       List<Student13> studentList = new ArrayList<Student13>();
       while(testCases>0){
          int id = in.nextInt();
          String fname = in.next();
          double cgpa = in.nextDouble();
-         
+
          Student13 st = new Student13(id, fname, cgpa);
          studentList.add(st);
-         
+
          testCases--;
       }
-         
+
       studentList.sort((l,r) -> {
         if(l.getCgpa() > r.getCgpa()) { return -1; }
         else if(l.getCgpa() < r.getCgpa()) { return 1; }
         else {
-          int compare_names = l.getFname().compareTo(r.getFname()); 
+          int compare_names = l.getFname().compareTo(r.getFname());
           if(compare_names == 0) { return l.getId() < l.getId() ? -1 : 1; }
           return compare_names;
         }
       });
-   
+
       for(Student13 st: studentList){
         System.out.println(st.getFname());
       }
-   }  
-   
-   // BitSet - bit manipulation
+   }
+
+   // deque most uniqs in window
+   //
    public static void main14(String[] args) {
+      Scanner in = new Scanner(System.in);
+      Deque<Integer> deque = new ArrayDeque<Integer>();
+      int n = in.nextInt();
+      int m = in.nextInt();
+
+      int most_uniqs = 0;
+      HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+      for (int i = 0; i < n; i++) {
+        int num = in.nextInt();
+        deque.add(num);
+
+        try {
+          int count_num = map.get(num);
+          map.put(num, ++count_num);
+        } catch(NullPointerException e) {
+          map.put(num, 1);
+        }
+
+        if(deque.size() > m) {
+          Integer first = deque.poll();
+          int count_num = map.get(first);
+          map.put(first, --count_num);
+          if(map.get(first) == 0) { map.remove(first); }
+
+          int count_uniqs = map.size();
+          most_uniqs = count_uniqs > most_uniqs ? count_uniqs : most_uniqs;
+        } else {
+          most_uniqs = map.size();
+        }
+      }
+      System.out.println(most_uniqs);
+  }
+
+   // BitSet - bit manipulation
+   public static void main15(String[] args) {
         Scanner in = new Scanner(System.in);
         int n = in.nextInt();
         int m = in.nextInt();
-        
+
         BitSet b1 = new BitSet();
         BitSet b2 = new BitSet();
         BitSet[] bitsets = { b1, b2 };
-        
+
         for(int i = 0; i < m; i++) {
           String operation = in.next();
           int op_val1 = in.nextInt();
           int op_val2 = in.nextInt();
-          
+
           switch(operation) {
             case "SET":
               bitsets[op_val1 - 1].set(op_val2);
@@ -386,13 +422,13 @@ public class DataStructures {
           System.out.println(bitsets[0].cardinality() + " " + bitsets[1].cardinality());
         }
     }
-    
+
     public static void main(String[] args) {
       Scanner in = new Scanner(System.in);
       int totalEvents = Integer.parseInt(in.nextLine());
       StudentComparator student_comparator = new StudentComparator();
       PriorityQueue<Student> priority_queue = new PriorityQueue<Student>(totalEvents, student_comparator);
-      
+
       while(totalEvents>0){
          String event = in.next();
          switch(event) {
@@ -408,11 +444,11 @@ public class DataStructures {
               break;
            default:
               System.out.println("event not found");
-         }           
+         }
          totalEvents--;
       }
       int queue_size = priority_queue.size();
-      if(queue_size == 0) { 
+      if(queue_size == 0) {
         System.out.println("EMPTY");
         return;
       }
@@ -425,7 +461,7 @@ public class DataStructures {
 class Player{
     String name;
     int score;
-    
+
     Player(String name, int score){
         this.name = name;
         this.score = score;
@@ -433,13 +469,13 @@ class Player{
 }
 
 class Checker implements Comparator<Player> {
-  
+
   public int compare(Player a, Player b) {
     if(a.score > b.score) { return -1; }
     else if(a.score < b.score ) { return 1; }
     return a.name.compareTo(b.name);
   }
-  
+
 }
 
 class Printer {
@@ -494,7 +530,7 @@ class Student{
 }
 
 class StudentComparator implements Comparator<Student> {
-  
+
   public int compare(Student a, Student b) {
     if(a.getCgpa() > b.getCgpa()) { return -1; }
     else if(a.getCgpa() < b.getCgpa()) { return 1; }

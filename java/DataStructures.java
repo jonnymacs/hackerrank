@@ -313,18 +313,19 @@ public class DataStructures {
           System.out.printf("%s %s\n", player[i].name, player[i].score);
       }
   }
-
-  public static void main(String[] args){
+  
+  // custom sort
+  public static void main13(String[] args){
       Scanner in = new Scanner(System.in);
       int testCases = Integer.parseInt(in.nextLine());
       
-      List<Student> studentList = new ArrayList<Student>();
+      List<Student13> studentList = new ArrayList<Student13>();
       while(testCases>0){
          int id = in.nextInt();
          String fname = in.next();
          double cgpa = in.nextDouble();
          
-         Student st = new Student(id, fname, cgpa);
+         Student13 st = new Student13(id, fname, cgpa);
          studentList.add(st);
          
          testCases--;
@@ -340,10 +341,85 @@ public class DataStructures {
         }
       });
    
-      for(Student st: studentList){
+      for(Student13 st: studentList){
         System.out.println(st.getFname());
       }
    }  
+   
+   // BitSet - bit manipulation
+   public static void main14(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        int m = in.nextInt();
+        
+        BitSet b1 = new BitSet();
+        BitSet b2 = new BitSet();
+        BitSet[] bitsets = { b1, b2 };
+        
+        for(int i = 0; i < m; i++) {
+          String operation = in.next();
+          int op_val1 = in.nextInt();
+          int op_val2 = in.nextInt();
+          
+          switch(operation) {
+            case "SET":
+              bitsets[op_val1 - 1].set(op_val2);
+              break;
+            case "FLIP":
+              bitsets[op_val1 - 1].flip(op_val2);
+              break;
+            case "AND":
+              bitsets[op_val1 - 1].and(bitsets[op_val2 - 1]);
+              break;
+            case "OR":
+              bitsets[op_val1 - 1].or(bitsets[op_val2 - 1]);
+              break;
+            case "XOR":
+              bitsets[op_val1 - 1].xor(bitsets[op_val2 - 1]);
+              break;
+            default:
+              System.out.println("Operation Not Found\n");
+              break;
+          }
+          System.out.println(i+"\n");
+          System.out.println(operation+"\n");
+          System.out.println(bitsets[0].cardinality() + " " + bitsets[1].cardinality());
+        }
+    }
+    
+    public static void main(String[] args) {
+      Scanner in = new Scanner(System.in);
+      int totalEvents = Integer.parseInt(in.nextLine());
+      StudentComparator student_comparator = new StudentComparator();
+      PriorityQueue<Student> priority_queue = new PriorityQueue<Student>(totalEvents, student_comparator);
+      
+      while(totalEvents>0){
+         String event = in.next();
+         switch(event) {
+           case "ENTER":
+              String fname = in.next();
+              double cgpa = in.nextDouble();
+              int id = in.nextInt();
+              Student student = new Student(id, fname, cgpa);
+              priority_queue.add(student);
+              break;
+           case "SERVED":
+              priority_queue.poll();
+              break;
+           default:
+              System.out.println("event not found");
+         }           
+         totalEvents--;
+      }
+      int queue_size = priority_queue.size();
+      if(queue_size == 0) { 
+        System.out.println("EMPTY");
+        return;
+      }
+      for(int i = 0; i < queue_size; i++) {
+        System.out.println(priority_queue.poll().getFname());
+      }
+    }
 }
 
 class Player{
@@ -375,11 +451,11 @@ class Printer {
    }
 }
 
-class Student{
+class Student13{
    private int id;
    private String fname;
    private double cgpa;
-   public Student(int id, String fname, double cgpa) {
+   public Student13(int id, String fname, double cgpa) {
       super();
       this.id = id;
       this.fname = fname;
@@ -394,4 +470,38 @@ class Student{
    public double getCgpa() {
       return cgpa;
    }
+}
+
+class Student{
+   private int token;
+   private String fname;
+   private double cgpa;
+   public Student(int id, String fname, double cgpa) {
+      super();
+      this.token = id;
+      this.fname = fname;
+      this.cgpa = cgpa;
+   }
+   public int getToken() {
+      return token;
+   }
+   public String getFname() {
+      return fname;
+   }
+   public double getCgpa() {
+      return cgpa;
+   }
+}
+
+class StudentComparator implements Comparator<Student> {
+  
+  public int compare(Student a, Student b) {
+    if(a.getCgpa() > b.getCgpa()) { return -1; }
+    else if(a.getCgpa() < b.getCgpa()) { return 1; }
+    else {
+      int compare_names = a.getFname().compareTo(b.getFname());
+      if(compare_names == 0) { return a.getToken() < b.getToken() ? -1 : 1; }
+      return compare_names;
+    }
+  }
 }
